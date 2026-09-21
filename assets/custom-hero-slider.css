@@ -1,0 +1,398 @@
+.farm-hero-section .page-width-full {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .farm-hero-section .hero-banner-slider {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    min-height: 560px;
+    max-height: 1020px;
+  }
+
+  @media (max-width: 767px) {
+    .farm-hero-section .hero-banner-slider {
+      height: 85dvh;
+    }
+  }
+
+  /* Slide Wrapper */
+  .farm-hero__slides-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  /* Slide Reveal Transition */
+  .farm-hero__slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    visibility: hidden;
+    pointer-events: none;
+    z-index: 1;
+    clip-path: inset(50% 0 50% 0);
+    will-change: clip-path;
+  }
+
+  .farm-hero__slide.is-prev {
+    visibility: visible;
+    z-index: 2;
+    clip-path: inset(0 0 0 0);
+  }
+
+  .farm-hero__slide.is-active {
+    visibility: visible;
+    pointer-events: auto;
+    z-index: 3;
+    clip-path: inset(0 0 0 0);
+    transition: clip-path var(--hero-wipe-duration) var(--hero-wipe-ease);
+  }
+
+  .farm-hero-section.is-instant .farm-hero__slide {
+    transition: none !important;
+  }
+
+  .farm-hero__media-container {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  .farm-hero__picture {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .farm-hero__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+    display: block;
+  }
+
+  .farm-hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0.05) 50%, rgba(0, 0, 0, 0.5) 100%);
+    pointer-events: none;
+  }
+
+  .farm-hero__placeholder {
+    width: 100%;
+    height: 100%;
+    background: #111;
+  }
+
+  /* Content Wrapper */
+  .farm-hero__content-wrap {
+    position: relative;
+    z-index: 4;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: clamp(24px, 7.5vw, 120px);
+    padding-right: clamp(24px, 7.5vw, 120px);
+    padding-bottom: 90px;
+    box-sizing: border-box;
+  }
+
+  .farm-hero__content {
+    max-width: 567px;
+    width: 100%;
+  }
+/* Micro Fade-In-Up – smoother version */
+/* Animate.css controlled fade-up */
+.farm-hero__anim-item {
+    opacity: 0; /* initial state before animation */
+  }
+  
+  .farm-hero__slide.is-active .farm-hero__anim-item.animate__animated {
+    opacity: 1;
+  }
+  
+  /* reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .farm-hero__anim-item {
+      opacity: 1 !important;
+      transform: none !important;
+      animation: none !important;
+    }
+  }
+
+  .farm-hero__subtitle {
+    margin: 0 0 16px;
+    font-family: var(--hero-font);
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 150%;
+    color: var(--hero-text-light);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  }
+
+  .farm-hero__heading {
+    margin: 0;
+    font-family: var(--hero-font);
+    font-weight: 400;
+    font-size: 64px;
+    line-height: 102%;
+    color: var(--hero-text-light);
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+  }
+
+  .farm-hero__cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 28px;
+    padding: 12px 26px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 4px;
+    color: #ffffff;
+    font-family: var(--hero-font);
+    font-size: 15px;
+    text-decoration: none;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  .farm-hero__cta-btn:hover {
+    background: #ffffff;
+    color: #111111;
+  }
+
+  /* Navigation Footer */
+  .farm-hero__footer {
+    position: absolute;
+    bottom: clamp(24px, 5vw, 64px);
+    left: clamp(24px, 7.5vw, 120px);
+    right: clamp(24px, 7.5vw, 120px);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: clamp(24px, 4vw, 56px);
+    pointer-events: none;
+  }
+
+  .farm-hero__thumb-nav-wrapper {
+    pointer-events: auto;
+  }
+
+  .farm-hero__thumb-btn {
+    position: relative;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    outline-offset: 6px;
+    display: block;
+  }
+
+  .farm-hero__thumb-btn:focus-visible {
+    outline: 2px solid #ffffff;
+  }
+
+  .farm-hero__thumb-frame {
+    position: relative;
+    width: 138px;
+    height: 138px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+  }
+
+  .farm-hero__thumb-btn:active .farm-hero__thumb-frame {
+    transform: scale(0.95);
+  }
+
+  .farm-hero__thumb-svg {
+    position: absolute;
+    inset: -6px;
+    width: calc(100% + 12px);
+    height: calc(100% + 12px);
+    fill: none;
+    pointer-events: none;
+    z-index: 6;
+    overflow: visible;
+  }
+
+  .farm-hero__border-track {
+    stroke: rgba(255, 255, 255, 0.25);
+    stroke-width: 1.5;
+  }
+
+  .farm-hero__border-live {
+    stroke: #ffffff;
+    stroke-width: 4;
+    stroke-linecap: square;
+    stroke-dasharray: 400;
+    stroke-dashoffset: 400;
+  }
+
+  .farm-hero__thumb-img-box {
+    position: relative;
+    width: 93px;
+    height: 93px;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.6);
+  }
+
+  .farm-hero__thumb-slider {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    transition: transform 0.65s cubic-bezier(0.25, 1, 0.5, 1);
+    will-change: transform;
+  }
+
+  .farm-hero__thumb-item-wrapper {
+    position: relative;
+    flex: 0 0 100%;
+    width: 100%;
+    height: 100%;
+  }
+
+  .farm-hero__thumb-item {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(0.85);
+    transition: filter 0.3s ease, transform 0.4s ease;
+  }
+
+  .farm-hero__thumb-btn:hover .farm-hero__thumb-item {
+    filter: brightness(1.05);
+    transform: scale(1.06);
+  }
+
+  .farm-hero__thumb-placeholder {
+    background: #232323;
+  }
+
+  .farm-hero__thumb-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--hero-font);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: #ffffff;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.85);
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  .farm-hero__pagination {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    pointer-events: auto;
+  }
+
+  .farm-hero__page-current,
+  .farm-hero__page-total {
+    font-family: var(--hero-font);
+    font-size: 14px;
+    font-weight: 400;
+    color: #ffffff;
+    letter-spacing: 0.05em;
+  }
+
+  .farm-hero__page-track {
+    position: relative;
+    width: clamp(70px, 9vw, 120px);
+    height: 2px;
+    background: var(--hero-track-bg);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .farm-hero__page-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 25%;
+    background: var(--hero-track-fill);
+    border-radius: 2px;
+    transition: width 0.65s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  .farm-hero__sr-controls,
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    border: 0;
+  }
+
+  @media (max-width: 767px) {
+    .farm-hero__subtitle {
+      font-size: 14px;
+      line-height: 130%;
+      color: var(--hero-text-mobile);
+      margin-bottom: 12px;
+    }
+
+    .farm-hero__heading {
+      font-size: 42px;
+      line-height: 105%;
+      max-width: 320px;
+    }
+
+    .farm-hero__thumb-frame {
+      width: 115px;
+      height: 115px;
+    }
+
+    .farm-hero__thumb-img-box {
+      width: 77px;
+      height: 77px;
+    }
+
+    .farm-hero__page-track {
+      width: 110px;
+    }
+
+    .farm-hero__footer {
+      bottom: 75px;
+      gap: 20px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .farm-hero__slide,
+    .farm-hero__page-bar,
+    .farm-hero__thumb-slider,
+    .farm-hero__thumb-frame,
+    .farm-hero__anim-item {
+      transition: none !important;
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  }
