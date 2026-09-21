@@ -1,0 +1,419 @@
+{% comment %}
+  Custom Responsive Header Section with Dynamic Navigation & CTA Button
+{% endcomment %}
+
+<header class="custom-header" style="--header-bg: {{ section.settings.bg_color }}; --header-text: {{ section.settings.text_color }};">
+  <div class="custom-header__container">
+    
+    <!-- Logo / Brand Title -->
+     {% if section.settings.logo != blank %}
+    <div class="custom-header__brand">
+      <a href="{{ routes.root_url }}" class="custom-header__logo-link">
+        {% if section.settings.logo != blank %}
+          <img 
+            src="{{ section.settings.logo | image_url: width: section.settings.logo_width }}" 
+            alt="{{ shop.name | escape }}"
+            width="{{ section.settings.logo_width }}"
+            height="auto"
+            loading="eager"
+            class="custom-header__logo-img"
+          >
+        {% else %}
+          <span class="custom-header__shop-name">{{ shop.name }}</span>
+        {% endif %}
+      </a>
+    </div>
+    {% endif %}
+    <!-- Desktop Navigation -->
+    <nav class="custom-header__nav" aria-label="Main Navigation">
+      <ul class="custom-header__menu">
+        {% for link in linklists[section.settings.menu].links %}
+          <li class="custom-header__menu-item">
+            <a href="{{ link.url }}" class="custom-header__link {% if link.active %}active{% endif %}">
+              {{ link.title | escape }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </nav>
+
+    <!-- Right Side Actions (CTA Button & Mobile Toggle) -->
+    <div class="custom-header__actions">
+      {% if section.settings.show_button and section.settings.button_text != blank %}
+        <a href="{{ section.settings.button_url | default: '#' }}" class="custom-header__cta-btn">
+          <span>{{ section.settings.button_text }}</span>
+          <svg class="custom-header__arrow-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+      {% endif %}
+
+      <!-- Mobile Hamburger Button -->
+      <button 
+        type="button" 
+        class="custom-header__toggle" 
+        aria-label="Toggle navigation menu"
+        aria-expanded="false"
+        id="HeaderToggleBtn"
+      >
+        <span class="custom-header__hamburger-bar"></span>
+        <span class="custom-header__hamburger-bar custom-header__hamburger-bar-middle"></span>
+        <span class="custom-header__hamburger-bar"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Drawer Menu -->
+  <div class="custom-header__drawer" id="HeaderMobileDrawer" aria-hidden="true">
+    <nav class="custom-header__mobile-nav">
+      <ul class="custom-header__mobile-menu">
+        {% for link in linklists[section.settings.menu].links %}
+          <li class="custom-header__mobile-item">
+            <a href="{{ link.url }}" class="custom-header__mobile-link {% if link.active %}active{% endif %}">
+              {{ link.title | escape }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+      {% if section.settings.show_button and section.settings.button_text != blank %}
+        <div class="custom-header__mobile-cta-wrapper">
+          <a href="{{ section.settings.button_url | default: '#' }}" class="custom-header__cta-btn custom-header__cta-btn--full">
+            <span>{{ section.settings.button_text }}</span>
+            <img class="custom-btn-icon" src="https://cdn.shopify.com/s/files/1/0820/6460/5411/files/shape.svg?v=1789811639" width="18" height="14" alt="" srcset="">
+          </a>
+        </div>
+      {% endif %}
+    </nav>
+  </div>
+</header>
+
+<style>
+  .template-index .custom-header {
+    background-color: var(--header-bg, #ffffff);
+    color: var(--header-text, #111111);
+    width: 98%;
+    z-index: 100;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    box-sizing: border-box;
+        position: absolute;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .custom-header *,
+  .custom-header *::before,
+  .custom-header *::after {
+    box-sizing: inherit;
+  }
+
+  .custom-header__container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 101px;
+    padding: 0 40px;
+  }
+
+  .custom-header__brand {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .custom-header__logo-link {
+    text-decoration: none;
+    color: inherit;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .custom-header__shop-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .custom-header__logo-img {
+    display: block;
+    height: auto;
+    max-width: 100%;
+  }
+
+  /* Desktop Nav Links */
+  .custom-header__nav {
+    display: flex;
+    align-items: center;
+  }
+
+  .custom-header__menu {
+    display: flex;
+    align-items: center;
+    gap: 2.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .custom-header__link {
+    text-decoration: none;
+    color: var(--header-text, #111111);
+    font-size: 14px;
+    font-family: Work sans;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    transition: opacity 0.2s ease;
+  }
+
+  .custom-header__link:hover,
+  .custom-header__link.active {
+    opacity: 0.6;
+  }
+
+  /* Actions Area */
+  .custom-header__actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-shrink: 0;
+  }
+
+  /* Button matching user design */
+  .custom-header__cta-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.8rem 1.25rem;
+    border: 1px solid currentColor;
+    background: transparent;
+    color: var(--header-text, #111111);
+    text-decoration: none;
+    font-size: 16px;
+    font-family: Work sans;
+    font-weight: 400;
+    line-height: 1;
+    border-radius: 0;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    gap: 12px;
+}
+
+  .custom-header__cta-btn:hover {
+    background-color: var(--header-text, #111111);
+    color: var(--header-bg, #ffffff);
+  }
+
+  .custom-header__arrow-icon {
+    display: inline-block;
+    transition: transform 0.2s ease;
+  }
+
+  .custom-header__cta-btn:hover .custom-header__arrow-icon {
+    transform: translateX(3px);
+  }
+
+  /* Hamburger Toggle (as shown in reference screenshot) */
+  .custom-header__toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    width: 48px;
+    height: 48px;
+    background-color: #f7f5f0; /* Slight warm off-white tint from reference */
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    border-radius: 2px;
+  }
+
+  .custom-header__hamburger-bar {
+    display: block;
+    width: 22px;
+    height: 1.5px;
+    background-color: #333333;
+    transition: transform 0.25s ease, opacity 0.25s ease;
+  }
+  span.custom-header__hamburger-bar.custom-header__hamburger-bar-middle {
+    width: 18px;
+}
+
+  /* Drawer Menu */
+  .custom-header__drawer {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: var(--header-bg, #ffffff);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    padding: 1.5rem 2rem;
+  }
+
+  .custom-header__drawer.is-open {
+    display: block;
+  }
+
+  .custom-header__mobile-menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .custom-header__mobile-link {
+    text-decoration: none;
+    color: var(--header-text, #111111);
+    font-size: 1.05rem;
+    display: block;
+  }
+
+  .custom-header__mobile-cta-wrapper {
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .custom-header__cta-btn--full {
+    width: 100%;
+  }
+
+  /* Responsive Breakpoint */
+  @media screen and (max-width: 900px) {
+    .custom-header__nav {
+      display: none;
+    }
+    .custom-header__actions {
+    width: 100%;
+    justify-content: space-between;
+}
+
+    .custom-header__toggle {
+      display: flex;
+    }
+
+    /* Active hamburger animation */
+    .custom-header__toggle.is-active .custom-header__hamburger-bar:nth-child(1) {
+      transform: translateY(5.5px) rotate(45deg);
+    }
+    .custom-header__toggle.is-active .custom-header__hamburger-bar:nth-child(2) {
+      opacity: 0;
+    }
+    .custom-header__toggle.is-active .custom-header__hamburger-bar:nth-child(3) {
+      transform: translateY(-5.5px) rotate(-45deg);
+    }
+  }
+
+  @media screen and (max-width: 576px){
+    .custom-header {
+    width: 100%;
+    position: static; 
+    top: 0;
+    left: 0;
+    transform: translateX(0);
+}
+.custom-header__container {
+    min-height: 80px;
+    padding: 0 20px;
+}
+  }
+
+ 
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const toggleBtn = document.getElementById('HeaderToggleBtn');
+    const drawer = document.getElementById('HeaderMobileDrawer');
+
+    if (!toggleBtn || !drawer) return;
+
+    toggleBtn.addEventListener('click', () => {
+      const isOpen = drawer.classList.contains('is-open');
+      drawer.classList.toggle('is-open', !isOpen);
+      toggleBtn.classList.toggle('is-active', !isOpen);
+      toggleBtn.setAttribute('aria-expanded', !isOpen);
+      drawer.setAttribute('aria-hidden', isOpen);
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Custom Header",
+   "enabled_on": {
+    "groups": ["header"]
+  },
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo image"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "min": 50,
+      "max": 250,
+      "step": 5,
+      "unit": "px",
+      "label": "Custom logo width",
+      "default": 120
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Navigation Menu",
+      "default": "main-menu",
+      "info": "Select any menu created under Online Store > Navigation"
+    },
+    {
+      "type": "header",
+      "content": "CTA Button"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_button",
+      "label": "Show CTA Button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Label",
+      "default": "Contact us"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Button Link"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text / Border Color",
+      "default": "#111111"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Header"
+    }
+  ]
+}
+{% endschema %}

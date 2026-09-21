@@ -1,0 +1,51 @@
+/* ---- Product card swatches (append to custom-collection.css) ---- */
+
+.collection-product__swatches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.product-swatch {
+    position: relative;
+    flex: none;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    background-color: #e5e5e5;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+/* Selected: ring outside the circle */
+.product-swatch[aria-pressed="true"] {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+}
+
+.product-swatch:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+}
+
+/* Sold out: dimmed with a diagonal line, still clickable */
+.product-swatch.is-sold-out {
+    opacity: 0.5;
+}
+
+.product-swatch.is-sold-out::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top right,
+            transparent calc(50% - 1px),
+            rgba(0, 0, 0, 0.6) calc(50% - 1px),
+            rgba(0, 0, 0, 0.6) calc(50% + 1px),
+            transparent calc(50% + 1px));
+}

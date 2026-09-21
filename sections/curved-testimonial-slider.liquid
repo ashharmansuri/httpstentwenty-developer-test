@@ -1,0 +1,238 @@
+<!-- Swiper CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link
+  rel="preconnect"
+  href="https://fonts.gstatic.com"
+  crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400&display=swap" rel="stylesheet">
+
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background: #0f0f11;
+    overflow-x: hidden;
+    font-family: sans-serif;
+  }
+
+  .head {
+    text-align: center;
+    color: #fff;
+    margin: 3rem 0 1rem;
+  }
+
+  /* Custom Drag Cursor */
+  .custom-drag-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 99px;
+    height: 99px;
+    background: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.4);
+    transition: opacity 0.25s ease
+    , transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+
+    /* Text styling */
+    font-family: 'Work Sans'
+    , sans-serif;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 100%;
+    letter-spacing: 0;
+    color: #000000;
+    user-select: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  }
+
+  .custom-drag-cursor.is-visible {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  .custom-drag-cursor.is-active {
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+
+  .carousel {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    /* Default cursor hide jab carousel ke upar ho */
+    cursor: none !important;
+  }
+
+  .swiper {
+    padding: 6rem 0 8rem;
+    overflow: visible;
+    cursor: none !important;
+  }
+
+  .swiper-slide {
+    width: 410px !important;
+    display: flex;
+    justify-content: center;
+  }
+
+  .single {
+    width: 100%;
+    position: relative;
+    user-select: none;
+    transform-origin: center bottom;
+    will-change: transform;
+
+  }
+
+  .single img {
+    width: 100%;
+    height: auto;
+    display: block;
+    pointer-events: none;
+  }
+</style>
+
+<!-- Custom Cursor Element -->
+<div class="custom-drag-cursor" id="dragCursor">DRAG</div>
+
+<div class="head">
+  <h1>Swiper.js Bend Carousel</h1>
+  <p style="opacity: 0.6; font-size: 14px; margin-top: 6px;">Always Centered Arc Effect</p>
+</div>
+
+<div class="carousel" id="carouselWrapper">
+  <div class="swiper">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide">
+        <div class="single">
+          <img src="https://picsum.photos/800/1100?random=1" alt="" />
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="single">
+          <img src="https://picsum.photos/800/1100?random=2" alt="" />
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="single">
+          <img src="https://picsum.photos/800/1100?random=3" alt="" />
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="single">
+          <img src="https://picsum.photos/800/1100?random=4" alt="" />
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="single">
+          <img src="https://picsum.photos/800/1100?random=5" alt="" />
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="single">
+          <img src="https://picsum.photos/800/1100?random=6" alt="" />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+  const CARD_SPACING = 90;
+  const MAX_TILT_DEG = 15;
+  const ARC_DROP = 70;
+  
+  const swiper = new Swiper('.swiper', {
+    slidesPerView: 'auto',
+    centeredSlides: true,
+    spaceBetween: CARD_SPACING,
+    loop: true,
+    // Swiper v11 me slidesPerView: 'auto' ke sath ye 2 lines compulsory hain:
+    loopSlides: 6,                 // Swiper ko force karta hai extra clone slides banane ke liye
+    watchSlidesProgress: true,
+    grabCursor: false,
+    speed: 500
+  });
+  
+  function calculateWheel() {
+    const screenCenterX = window.innerWidth / 2;
+    // Har frame par clone slides ko bhi select karna zaroori hai
+    const slides = document.querySelectorAll('.single');
+  
+    slides.forEach((slide) => {
+      const rect = slide.getBoundingClientRect();
+      const slideCenterX = rect.left + rect.width / 2;
+      const progress = (slideCenterX - screenCenterX) / (window.innerWidth / 2);
+  
+      const ty = Math.pow(progress, 2) * ARC_DROP;
+      const rotate = progress * MAX_TILT_DEG;
+  
+      slide.style.transform = `translate3d(0, ${ty}px, 0) rotate(${rotate}deg)`;
+    });
+  }
+  
+  function raf() {
+    calculateWheel();
+    requestAnimationFrame(raf);
+  }
+  
+  raf();
+  
+  // Custom Cursor Script (Lerp lag-free tracking)
+  const cursor = document.getElementById('dragCursor');
+  const carouselArea = document.getElementById('carouselWrapper');
+  
+  let mouseX = window.innerWidth / 2;
+  let mouseY = window.innerHeight / 2;
+  let cursorX = mouseX;
+  let cursorY = mouseY;
+  
+  window.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
+  
+  carouselArea.addEventListener('mouseenter', () => {
+    cursor.classList.add('is-visible');
+  });
+  
+  carouselArea.addEventListener('mouseleave', () => {
+    cursor.classList.remove('is-visible');
+    cursor.classList.remove('is-active');
+  });
+  
+  window.addEventListener('mousedown', () => {
+    if (cursor.classList.contains('is-visible')) {
+      cursor.classList.add('is-active');
+    }
+  });
+  
+  window.addEventListener('mouseup', () => {
+    cursor.classList.remove('is-active');
+  });
+  
+  function renderCursor() {
+    // Lerp (smooth follow feel)
+    cursorX += (mouseX - cursorX) * 0.15;
+    cursorY += (mouseY - cursorY) * 0.15;
+  
+    cursor.style.left = `${cursorX}px`;
+    cursor.style.top = `${cursorY}px`;
+  
+    requestAnimationFrame(renderCursor);
+  }
+  
+  renderCursor();
+</script>

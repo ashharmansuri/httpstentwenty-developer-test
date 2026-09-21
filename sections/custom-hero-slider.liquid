@@ -1,0 +1,991 @@
+{%- liquid
+  assign slide_count = section.blocks.size
+  assign autoplay = section.settings.autoplay
+  assign autoplay_speed = section.settings.autoplay_speed | times: 1000-%}
+<section
+  id="farm-hero-{{ section.id }}"
+  class="farm-hero-section"
+  data-section-id="{{ section.id }}"
+  data-slide-count="{{ slide_count }}"
+  data-autoplay="{{ autoplay }}"
+  data-autoplay-speed="{{ autoplay_speed }}"
+  aria-label="Hero Banner Slider">
+  <div class="page-width-full">
+    <div
+      class="hero-banner-slider"
+      role="region"
+      aria-roledescription="carousel"
+      aria-label="{{ section.settings.accessibility_label | default: 'Featured Highlights' | escape }}">
+
+      <!-- Slides Container -->
+      <div class="farm-hero__slides-wrapper">
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign is_first = forloop.first
+            assign desktop_img = block.settings.desktop_image
+            assign mobile_img = block.settings.mobile_image
+
+            if mobile_img == blank
+              assign mobile_img = desktop_img
+            endif
+
+            assign slide_alt = block.settings.alt_text | default: desktop_img.alt | default: block.settings.heading | default: 'TenTwenty Farms Hero'
+
+            if is_first
+              assign img_loading = 'eager'
+              assign img_fetchpriority = 'high'
+            else
+              assign img_loading = 'lazy'
+              assign img_fetchpriority = 'auto'
+            endif
+
+            assign is_h1 = false
+            if section.settings.use_h1 and is_first
+              assign is_h1 = true
+            endif
+          -%}
+
+          <div
+            class="farm-hero__slide {% if is_first %}is-active{% endif %}"
+            id="Slide-{{ section.id }}-{{ forloop.index }}"
+            data-index="{{ forloop.index0 }}"
+            role="group"
+            aria-roledescription="slide"
+            aria-label="Slide {{ forloop.index }} of {{ slide_count }}"
+            aria-hidden="{% if is_first %}false{% else %}true{% endif %}"
+            {{ block.shopify_attributes }}>
+
+            <div class="farm-hero__media-container">
+              {%- if desktop_img != blank -%}
+                <picture class="farm-hero__picture">
+                  <source
+                    media="(max-width: 767px)"
+                    srcset="
+                      {{ mobile_img | image_url: width: 450 }} 450w,
+                      {{ mobile_img | image_url: width: 750 }} 750w,
+                      {{ mobile_img | image_url: width: 900 }} 900w"
+                    sizes="100vw">
+                  <source
+                    media="(min-width: 768px)"
+                    srcset="
+                      {{ desktop_img | image_url: width: 1000 }} 1000w,
+                      {{ desktop_img | image_url: width: 1440 }} 1440w,
+                      {{ desktop_img | image_url: width: 1920 }} 1920w,
+                      {{ desktop_img | image_url: width: 2560 }} 2560w"
+                    sizes="100vw">
+                  {{ desktop_img | image_url: width: 1920 | image_tag: 
+ class: 'farm-hero__image',
+ alt: slide_alt,
+ loading: img_loading,
+ fetchpriority: img_fetchpriority,
+ decoding: 'async',
+ widths: '450, 750, 1000, 1440, 1920, 2560'
+                  }}
+                </picture>
+              {%- else -%}
+                <div class="farm-hero__placeholder">
+                  {{ 'lifestyle-1' | placeholder_svg_tag: 'farm-hero__placeholder-svg' }}
+                </div>
+              {%- endif -%}
+              <div class="farm-hero__overlay"></div>
+            </div>
+
+            <div class="farm-hero__content-wrap">
+              <div class="farm-hero__content">
+                {%- if block.settings.subtitle != blank -%}
+                  <p class="farm-hero__subtitle">{{ block.settings.subtitle | escape }}</p>
+                {%- endif -%}
+
+                {%- if block.settings.heading != blank -%}
+                  {%- if is_h1 -%}
+                    <h1 class="farm-hero__heading">{{ block.settings.heading | newline_to_br }}</h1>
+                  {%- else -%}
+                    <h2 class="farm-hero__heading">{{ block.settings.heading | newline_to_br }}</h2>
+                  {%- endif -%}
+                {%- endif -%}
+
+                {%- if block.settings.button_label != blank and block.settings.link != blank -%}
+                  <a href="{{ block.settings.link }}" class="farm-hero__cta-btn">
+                    <span>{{ block.settings.button_label | escape }}</span>
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 14 14"
+                      fill="none"
+                      aria-hidden="true">
+                      <path
+                        d="M1 7H13M13 7L7.5 1.5M13 7L7.5 12.5"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    </svg>
+                  </a>
+                {%- endif -%}
+              </div>
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+
+      <!-- Navigation & Controls -->
+      {%- if slide_count > 1 -%}
+        <div class="farm-hero__footer" aria-label="Carousel Controls">
+
+          <!-- Thumbnail Next Button with Live SVG Border -->
+          <div class="farm-hero__thumb-nav-wrapper">
+            <button
+              type="button"
+              class="farm-hero__thumb-btn"
+              data-hero-next
+              aria-label="Next Slide">
+              <div class="farm-hero__thumb-frame">
+                <svg
+                  class="farm-hero__thumb-svg"
+                  viewBox="0 0 100 100"
+                  preserveAspectRatio="none">
+                  <rect
+                    class="farm-hero__border-track"
+                    x="2"
+                    y="2"
+                    width="96"
+                    height="96"
+                    rx="4" />
+                  <rect
+                    class="farm-hero__border-live"
+                    x="2"
+                    y="2"
+                    width="96"
+                    height="96"
+                    rx="4" />
+                </svg>
+
+                <div class="farm-hero__thumb-img-box">
+                  <div class="farm-hero__thumb-slider" data-thumb-track>
+                    {%- for block in section.blocks -%}
+                      {%- liquid
+                        assign thumb_img = block.settings.mobile_image | default: block.settings.desktop_image
+                      -%}
+                      <div class="farm-hero__thumb-item-wrapper" data-thumb-index="{{ forloop.index0 }}">
+                        {%- if thumb_img != blank -%}
+                          <img
+                            src="{{ thumb_img | image_url: width: 200, height: 200, crop: 'center' }}"
+                            width="100"
+                            height="100"
+                            alt=""
+                            aria-hidden="true"
+                            loading="lazy"
+                            class="farm-hero__thumb-item">
+                        {%- else -%}
+                          <div class="farm-hero__thumb-item farm-hero__thumb-placeholder"></div>
+                        {%- endif -%}
+                      </div>
+                    {%- endfor -%}
+                  </div>
+                  <span class="farm-hero__thumb-text">Next</span>
+                </div>
+              </div>
+            </button>
+          </div>
+
+          <!-- Numeric Progress Track -->
+          <div class="farm-hero__pagination" aria-live="polite">
+            <span class="farm-hero__page-current" data-current-indicator>01</span>
+            <div
+              class="farm-hero__page-track"
+              role="progressbar"
+              aria-valuemin="1"
+              aria-valuemax="{{ slide_count }}"
+              aria-valuenow="1">
+              <span class="farm-hero__page-bar" data-progress-bar></span>
+            </div>
+            <span class="farm-hero__page-total">
+              {%- if slide_count < 10 -%}0{{ slide_count }}
+              {%- else -%}
+                {{ slide_count }}{%- endif -%}
+            </span>
+          </div>
+
+          <!-- Screen Reader Accessible Controls -->
+          <div class="farm-hero__sr-controls">
+            <button
+              type="button"
+              class="farm-hero__sr-btn"
+              data-hero-prev
+              aria-label="Previous slide">
+              <span class="visually-hidden">Previous</span>
+            </button>
+          </div>
+        </div>
+      {%- endif -%}
+
+    </div>
+  </div>
+</section>
+<style>
+  #farm-hero-{{ section.id }} {
+    --hero-font: 'Work Sans'
+    , sans-serif;
+    --hero-text-light: #EEF4F9;
+    --hero-text-mobile: #F9F4EE;
+    --hero-accent-border: #ffffff;
+    --hero-track-bg: rgba(255, 255, 255, 0.3);
+    --hero-track-fill: #ffffff;
+
+    /* Slide-change animation (matches the reference video: ~1.2s) */
+    --hero-wipe-duration: 1200ms;
+    --hero-wipe-ease: cubic-bezier(0.65, 0, 0.35, 1);
+
+    position: relative;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #000000;
+    font-family: var(--hero-font);
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .farm-hero-section .page-width-full {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .farm-hero-section .hero-banner-slider {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    min-height: 560px;
+    max-height: 1020px;
+  }
+
+  @media (min-width: 1200px) {
+    .farm-hero-section .hero-banner-slider {
+      height: 960px;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .farm-hero-section .hero-banner-slider {
+      height: 100 svh;
+      min-height: 520px;
+      max-height: 850px;
+    }
+  }
+
+  /* Slide Wrapper */
+  .farm-hero__slides-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+
+  /*
+
+   ───────────────────────────────────────────────────────────── 
+   SLIDE CHANGE: CENTER-OUT VERTICAL SLIT REVEAL (Y-AXIS) 
+   ───────────────────────────────────────────────────────────── 
+   Matches the reference video: 
+
+   1. The incoming slide starts as a zero-height slit at the vertical 
+   centre of the banner: clip-path: inset(50% 0 50% 0) 
+   2. The slit expands upward AND downward at the same time until it 
+   covers the full banner: clip-path: inset(0 0 0 0) 
+   3. The outgoing slide stays completely static underneath (no scale, 
+   no fade, no movement) and is simply covered by the growing slit. 
+   4. The new image does NOT move or zoom, it is only uncovered. 
+   5. Hard mask edge, no fade, no opacity transition. 
+
+   State classes (set from JS): 
+   (none) hidden, slit closed 
+   .is-prev outgoing slide, fully visible underneath 
+   .is-active incoming slide, slit opens (the only state that animates) 
+*/
+  .farm-hero__slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    visibility: hidden;
+    pointer-events: none;
+    z-index: 1;
+    clip-path: inset(50% 0 50% 0);
+    will-change: clip-path;
+  }
+
+  /* Outgoing slide: stays put, fully visible, under the incoming one */
+  .farm-hero__slide.is-prev {
+    visibility: visible;
+    z-index: 2;
+    clip-path: inset(0 0 0 0);
+  }
+
+  /* Incoming slide: slit opens from the vertical centre */
+  .farm-hero__slide.is-active {
+    visibility: visible;
+    pointer-events: auto;
+    z-index: 3;
+    clip-path: inset(0 0 0 0);
+    transition: clip-path var(--hero-wipe-duration) var(--hero-wipe-ease);
+  }
+
+  /* Used by JS for instant jumps (theme editor block select) */
+  .farm-hero-section.is-instant .farm-hero__slide {
+    transition: none !important;
+  }
+
+  .farm-hero__media-container {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  .farm-hero__picture {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Image stays perfectly still while it is being revealed */
+  .farm-hero__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+    display: block;
+  }
+
+  .farm-hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0.05) 50%, rgba(0, 0, 0, 0.5) 100%);
+    pointer-events: none;
+  }
+
+  .farm-hero__placeholder {
+    width: 100%;
+    height: 100%;
+    background: #111;
+  }
+
+
+  /*
+
+   Content & Typography 
+   Text sits still inside its slide, so it is uncovered by the slit 
+   together with the image (as in the video). 
+*/
+  .farm-hero__content-wrap {
+    position: relative;
+    z-index: 4;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: clamp(24px, 7.5vw, 120px);
+    padding-right: clamp(24px, 7.5vw, 120px);
+    padding-bottom: 90px;
+    box-sizing: border-box;
+  }
+
+  .farm-hero__content {
+    max-width: 820px;
+  }
+
+  .farm-hero__subtitle {
+    margin: 0 0 16px;
+    font-family: var(--hero-font);
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 150%;
+    color: var(--hero-text-light);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  }
+
+  .farm-hero__heading {
+    margin: 0;
+    font-family: var(--hero-font);
+    font-weight: 400;
+    font-size: 64px;
+    line-height: 102%;
+    color: var(--hero-text-light);
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+  }
+
+  .farm-hero__cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 28px;
+    padding: 12px 26px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 4px;
+    color: #ffffff;
+    font-family: var(--hero-font);
+    font-size: 15px;
+    text-decoration: none;
+    transition: all 0.25s ease;
+  }
+
+  .farm-hero__cta-btn:hover {
+    background: #ffffff;
+    color: #111111;
+  }
+
+  /* Navigation Footer */
+  .farm-hero__footer {
+    position: absolute;
+    bottom: clamp(24px, 5vw, 64px);
+    left: clamp(24px, 7.5vw, 120px);
+    right: clamp(24px, 7.5vw, 120px);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: clamp(24px, 4vw, 56px);
+    pointer-events: none;
+  }
+
+  .farm-hero__thumb-nav-wrapper {
+    pointer-events: auto;
+  }
+
+  .farm-hero__thumb-btn {
+    position: relative;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    outline-offset: 6px;
+    display: block;
+  }
+
+  .farm-hero__thumb-btn:focus-visible {
+    outline: 2px solid #ffffff;
+  }
+
+  .farm-hero__thumb-frame {
+    position: relative;
+    width: 138px;
+    height: 138px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+  }
+
+  .farm-hero__thumb-btn:active .farm-hero__thumb-frame {
+    transform: scale(0.95);
+  }
+
+  .farm-hero__thumb-svg {
+    position: absolute;
+    inset: -6px;
+    width: calc(100% + 12px);
+    height: calc(100% + 12px);
+    fill: none;
+    pointer-events: none;
+    z-index: 6;
+    overflow: visible;
+  }
+
+  .farm-hero__border-track {
+    stroke: rgba(255, 255, 255, 0.25);
+    stroke-width: 1.5;
+  }
+
+  .farm-hero__border-live {
+    stroke: #ffffff;
+    stroke-width: 4;
+    stroke-linecap: square;
+    stroke-dasharray: 400;
+    stroke-dashoffset: 400;
+    transition: stroke-dashoffset 0.05s linear;
+  }
+
+  .farm-hero__thumb-img-box {
+    position: relative;
+    width: 93px;
+    height: 93px;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.6);
+  }
+
+  .farm-hero__thumb-slider {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    transition: transform 0.65s cubic-bezier(0.25, 1, 0.5, 1);
+    will-change: transform;
+  }
+
+  .farm-hero__thumb-item-wrapper {
+    position: relative;
+    flex: 0 0 100%;
+    width: 100%;
+    height: 100%;
+  }
+
+  .farm-hero__thumb-item {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(0.85);
+    transition: filter 0.3s ease
+    , transform 0.4s ease;
+  }
+
+  .farm-hero__thumb-btn:hover .farm-hero__thumb-item {
+    filter: brightness(1.05);
+    transform: scale(1.06);
+  }
+
+  .farm-hero__thumb-placeholder {
+    background: #232323;
+  }
+
+  .farm-hero__thumb-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--hero-font);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: #ffffff;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.85);
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  .farm-hero__pagination {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    pointer-events: auto;
+  }
+
+  .farm-hero__page-current,
+  .farm-hero__page-total {
+    font-family: var(--hero-font);
+    font-size: 14px;
+    font-weight: 400;
+    color: #ffffff;
+    letter-spacing: 0.05em;
+  }
+
+  .farm-hero__page-track {
+    position: relative;
+    width: clamp(70px, 9vw, 120px);
+    height: 2px;
+    background: var(--hero-track-bg);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .farm-hero__page-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 25%;
+    background: var(--hero-track-fill);
+    border-radius: 2px;
+    transition: width 0.65s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  .farm-hero__sr-controls,
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    border: 0;
+  }
+
+  @media (max-width: 767px) {
+    .farm-hero__subtitle {
+      font-size: 14px;
+      line-height: 130%;
+      color: var(--hero-text-mobile);
+      margin-bottom: 12px;
+    }
+
+    .farm-hero__heading {
+      font-size: 42px;
+      line-height: 105%;
+      max-width: 320px;
+    }
+
+    .farm-hero__thumb-frame {
+      width: 68px;
+      height: 68px;
+    }
+
+    .farm-hero__page-track {
+      width: 58px;
+    }
+
+    .farm-hero__footer {
+      bottom: 32px;
+      gap: 20px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .farm-hero__slide,
+    .farm-hero__page-bar,
+    .farm-hero__thumb-slider,
+    .farm-hero__thumb-frame {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+</style>
+<script>
+  (function() {
+    'use strict';
+  
+    /* Duration of the slit reveal in ms. This value is written to the
+       --hero-wipe-duration CSS variable, so CSS and JS always stay in sync. */
+    var WIPE_DURATION_MS = 1200;
+  
+    function initFarmSlider(sectionEl) {
+      if (!sectionEl || sectionEl._sliderInitialized) return;
+      sectionEl._sliderInitialized = true;
+  
+      const slideCount = parseInt(sectionEl.dataset.slideCount, 10) || 0;
+      if (slideCount <= 1) return;
+  
+      const slides = Array.from(sectionEl.querySelectorAll('.farm-hero__slide'));
+      const thumbTrack = sectionEl.querySelector('[data-thumb-track]');
+      const nextBtn = sectionEl.querySelector('[data-hero-next]');
+      const prevBtn = sectionEl.querySelector('[data-hero-prev]');
+      const currentIndicator = sectionEl.querySelector('[data-current-indicator]');
+      const progressBar = sectionEl.querySelector('[data-progress-bar]');
+      const progressTrack = sectionEl.querySelector('.farm-hero__page-track');
+      const liveBorder = sectionEl.querySelector('.farm-hero__border-live');
+  
+      const isAutoplayEnabled = sectionEl.dataset.autoplay === 'true';
+      const autoplaySpeed = parseInt(sectionEl.dataset.autoplaySpeed, 10) || 6000;
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  
+      const wipeMs = prefersReducedMotion ? 0 : WIPE_DURATION_MS;
+      sectionEl.style.setProperty('--hero-wipe-duration', wipeMs + 'ms');
+  
+      const TOTAL_PERIMETER = 400;
+      if (liveBorder) {
+        liveBorder.style.strokeDasharray = TOTAL_PERIMETER;
+        liveBorder.style.strokeDashoffset = TOTAL_PERIMETER;
+      }
+  
+      let currentIndex = 0;
+      let animFrameId = null;
+      let startTime = null;
+      let isLocked = false;
+      let lockTimer = null;
+  
+      function formatNumber(num) {
+        return num < 10 ? '0' + num : '' + num;
+      }
+  
+      /* Thumbnail, counter, progress bar and aria state */
+      function syncUI() {
+        slides.forEach((slide, idx) => {
+          slide.setAttribute('aria-hidden', idx === currentIndex ? 'false' : 'true');
+        });
+  
+        const nextPreviewIndex = (currentIndex + 1) % slideCount;
+        if (thumbTrack) {
+          thumbTrack.style.transform = `translateX(-${nextPreviewIndex * 100}%)`;
+        }
+  
+        if (currentIndicator) {
+          currentIndicator.textContent = formatNumber(currentIndex + 1);
+        }
+        if (progressBar) {
+          progressBar.style.width = (((currentIndex + 1) / slideCount) * 100) + '%';
+        }
+        if (progressTrack) {
+          progressTrack.setAttribute('aria-valuenow', currentIndex + 1);
+        }
+      }
+  
+      /*
+        Change slide. Returns true if a change was made.
+  
+        Sequence:
+          1. Every slide except the outgoing one is snapped back to
+             "hidden + slit closed" (this also resets a slide that was
+             the previous one, which matters when there are only 2 slides).
+          2. Force a reflow so that closed state is committed.
+          3. Outgoing slide stays visible underneath (.is-prev).
+          4. Incoming slide gets .is-active -> the slit opens from the
+             vertical centre.
+      */
+      function goTo(targetIndex, instant) {
+        if (isLocked && !instant) return false;
+  
+        let nextIndex = targetIndex;
+        if (nextIndex < 0) nextIndex = slideCount - 1;
+        else if (nextIndex >= slideCount) nextIndex = 0;
+  
+        if (nextIndex === currentIndex && !instant) return false;
+  
+        const outgoing = slides[currentIndex];
+        const incoming = slides[nextIndex];
+        currentIndex = nextIndex;
+  
+        if (instant) sectionEl.classList.add('is-instant');
+  
+        slides.forEach((slide) => {
+          if (slide !== outgoing) slide.classList.remove('is-active', 'is-prev');
+        });
+  
+        void incoming.offsetWidth; // commit the closed-slit start state
+  
+        if (outgoing !== incoming) {
+          outgoing.classList.remove('is-active');
+          outgoing.classList.add('is-prev');
+        }
+        incoming.classList.add('is-active');
+  
+        if (instant) {
+          void incoming.offsetWidth;
+          sectionEl.classList.remove('is-instant');
+        } else {
+          isLocked = true;
+          clearTimeout(lockTimer);
+          lockTimer = setTimeout(() => { isLocked = false; }, wipeMs);
+        }
+  
+        syncUI();
+        startTime = null;
+        return true;
+      }
+  
+      function loop(timestamp) {
+        if (!isAutoplayEnabled || prefersReducedMotion) return;
+  
+        if (!startTime) startTime = timestamp;
+        const elapsed = timestamp - startTime;
+        const progress = Math.min(elapsed / autoplaySpeed, 1);
+  
+        if (liveBorder) {
+          liveBorder.style.strokeDashoffset = TOTAL_PERIMETER - (progress * TOTAL_PERIMETER);
+        }
+  
+        if (elapsed >= autoplaySpeed) {
+          goTo(currentIndex + 1);
+          startTime = timestamp;
+        }
+  
+        animFrameId = requestAnimationFrame(loop);
+      }
+  
+      function startAnimation() {
+        if (animFrameId) cancelAnimationFrame(animFrameId);
+        startTime = null;
+        animFrameId = requestAnimationFrame(loop);
+      }
+  
+      function stopAnimation() {
+        if (animFrameId) {
+          cancelAnimationFrame(animFrameId);
+          animFrameId = null;
+        }
+      }
+  
+      if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+          if (goTo(currentIndex + 1)) startAnimation();
+        });
+      }
+  
+      if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+          if (goTo(currentIndex - 1)) startAnimation();
+        });
+      }
+  
+      sectionEl.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') {
+          if (goTo(currentIndex + 1)) startAnimation();
+        } else if (e.key === 'ArrowLeft') {
+          if (goTo(currentIndex - 1)) startAnimation();
+        }
+      });
+  
+      /* Theme editor helpers */
+      sectionEl._selectSlide = function(index) {
+        stopAnimation();
+        goTo(index, true);
+      };
+      sectionEl._resumeSlider = function() {
+        startAnimation();
+      };
+      sectionEl._cleanupSlider = function() {
+        stopAnimation();
+        clearTimeout(lockTimer);
+      };
+  
+      /* First slide is already .is-active from Liquid, so only sync the UI
+         (no slit animation on page load). */
+      syncUI();
+      startAnimation();
+    }
+  
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.farm-hero-section').forEach(initFarmSlider);
+      });
+    } else {
+      document.querySelectorAll('.farm-hero-section').forEach(initFarmSlider);
+    }
+  
+    document.addEventListener('shopify:section:load', (event) => {
+      const section = event.target.querySelector('.farm-hero-section');
+      if (section) initFarmSlider(section);
+    });
+  
+    document.addEventListener('shopify:section:unload', (event) => {
+      const section = event.target.querySelector('.farm-hero-section');
+      if (section && typeof section._cleanupSlider === 'function') {
+        section._cleanupSlider();
+      }
+    });
+  
+    document.addEventListener('shopify:block:select', (event) => {
+      const sectionEl = event.target.closest('.farm-hero-section');
+      if (!sectionEl || typeof sectionEl._selectSlide !== 'function') return;
+      const index = parseInt(event.target.dataset.index, 10);
+      if (!isNaN(index)) sectionEl._selectSlide(index);
+    });
+  
+    document.addEventListener('shopify:block:deselect', (event) => {
+      const sectionEl = event.target.closest('.farm-hero-section');
+      if (sectionEl && typeof sectionEl._resumeSlider === 'function') {
+        sectionEl._resumeSlider();
+      }
+    });
+  })();
+</script>
+{% schema %}
+  {
+    "name": "Custom Hero Slider",
+    "tag": "section",
+    "class": "section-farm-hero-slider",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "use_h1",
+        "label": "Use <h1> for the first slide heading",
+        "default": true
+      }, {
+        "type": "checkbox",
+        "id": "autoplay",
+        "label": "Enable autoplay",
+        "default": true
+      }, {
+        "type": "range",
+        "id": "autoplay_speed",
+        "min": 3,
+        "max": 12,
+        "step": 1,
+        "unit": "s",
+        "label": "Autoplay transition speed",
+        "default": 6
+      }, {
+        "type": "text",
+        "id": "accessibility_label",
+        "label": "Carousel screen reader label",
+        "default": "TenTwenty Highlights"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "slide",
+        "name": "Slide",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Images"
+          },
+          {
+            "type": "image_picker",
+            "id": "desktop_image",
+            "label": "Desktop image"
+          },
+          {
+            "type": "image_picker",
+            "id": "mobile_image",
+            "label": "Mobile image (Optional)"
+          },
+          {
+            "type": "text",
+            "id": "alt_text",
+            "label": "Custom image alt text"
+          }, {
+            "type": "header",
+            "content": "Content"
+          }, {
+            "type": "text",
+            "id": "subtitle",
+            "label": "Subtitle / Eyebrow",
+            "default": "Welcome To Tentwenty"
+          }, {
+            "type": "textarea",
+            "id": "heading",
+            "label": "Main heading",
+            "default": "Tentwenty"
+          }, {
+            "type": "header",
+            "content": "Link / Action (Optional)"
+          }, {
+            "type": "url",
+            "id": "link",
+            "label": "Button link"
+          }, {
+            "type": "text",
+            "id": "button_label",
+            "label": "Button label"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Custom Hero Slider",
+        "blocks": [
+          {
+            "type": "slide"
+          }, {
+            "type": "slide"
+          }, {
+            "type": "slide"
+          }, {
+            "type": "slide"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}
