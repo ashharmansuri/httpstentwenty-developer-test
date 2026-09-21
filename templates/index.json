@@ -93,6 +93,7 @@
         "testimonial_eLLagE": {
           "type": "testimonial",
           "settings": {
+            "image": "shopify://shop_images/ChatGPT_Image_Sep_21_2026_08_17_20_PM.png",
             "client": "Client 5",
             "location": "Palm , United Arab Emirates"
           }
