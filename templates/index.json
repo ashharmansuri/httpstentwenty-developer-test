@@ -90,6 +90,13 @@
     "curved_testimonial_slider_yQXGaN": {
       "type": "curved-testimonial-slider",
       "blocks": {
+        "testimonial_eLLagE": {
+          "type": "testimonial",
+          "settings": {
+            "client": "Client 5",
+            "location": "Palm , United Arab Emirates"
+          }
+        },
         "testimonial_CnxVRB": {
           "type": "testimonial",
           "settings": {
@@ -124,6 +131,7 @@
         }
       },
       "block_order": [
+        "testimonial_eLLagE",
         "testimonial_CnxVRB",
         "testimonial_YDWqf9",
         "testimonial_eEf7iT",
@@ -134,11 +142,53 @@
         "heading": "Quality Products",
         "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
       }
+    },
+    "collection_list_L8qy7j": {
+      "type": "collection-list",
+      "blocks": {
+        "featured_collection_GyrQbB": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "womens"
+          }
+        },
+        "featured_collection_FzPQbN": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "mens"
+          }
+        },
+        "featured_collection_ntUDyp": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "bag"
+          }
+        }
+      },
+      "block_order": [
+        "featured_collection_GyrQbB",
+        "featured_collection_FzPQbN",
+        "featured_collection_ntUDyp"
+      ],
+      "name": "t:sections.collection-list.presets.name",
+      "settings": {
+        "title": "Collections",
+        "heading_size": "h1",
+        "image_ratio": "square",
+        "columns_desktop": 3,
+        "color_scheme": "",
+        "show_view_all": false,
+        "columns_mobile": "1",
+        "swipe_on_mobile": false,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
     }
   },
   "order": [
     "image_banner",
     "custom_hero_slider_n4pEJ4",
-    "curved_testimonial_slider_yQXGaN"
+    "curved_testimonial_slider_yQXGaN",
+    "collection_list_L8qy7j"
   ]
 }
