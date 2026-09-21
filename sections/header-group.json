@@ -25,6 +25,7 @@
       "block_order": [
         "announcement-bar-0"
       ],
+      "disabled": true,
       "settings": {
         "auto_rotate": false,
         "change_slides_speed": 5,
@@ -37,6 +38,7 @@
     },
     "header": {
       "type": "header",
+      "disabled": true,
       "settings": {
         "logo_position": "middle-left",
         "mobile_logo_position": "center",
@@ -52,10 +54,24 @@
         "padding_top": 20,
         "padding_bottom": 20
       }
+    },
+    "custom_header_DbAJR4": {
+      "type": "custom-header",
+      "name": "Custom Header",
+      "settings": {
+        "logo_width": 120,
+        "menu": "main-menu",
+        "show_button": true,
+        "button_text": "Contact us",
+        "button_url": "",
+        "bg_color": "#ffffff",
+        "text_color": "#111111"
+      }
     }
   },
   "order": [
     "announcement-bar",
-    "header"
+    "header",
+    "custom_header_DbAJR4"
   ]
 }
