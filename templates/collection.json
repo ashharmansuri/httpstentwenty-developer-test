@@ -11,7 +11,6 @@
   "sections": {
     "banner": {
       "type": "main-collection-banner",
-      "disabled": true,
       "settings": {
         "show_collection_description": true,
         "show_collection_image": false,
@@ -20,7 +19,6 @@
     },
     "product-grid": {
       "type": "main-collection-product-grid",
-      "disabled": true,
       "settings": {
         "products_per_page": 16,
         "columns_desktop": 4,
@@ -38,18 +36,10 @@
         "padding_top": 36,
         "padding_bottom": 36
       }
-    },
-    "custom_product_grid_GtjzUA": {
-      "type": "custom-product-grid",
-      "name": "Custom Product Grid",
-      "settings": {
-        "grid_gap": 20
-      }
     }
   },
   "order": [
     "banner",
-    "product-grid",
-    "custom_product_grid_GtjzUA"
+    "product-grid"
   ]
 }
