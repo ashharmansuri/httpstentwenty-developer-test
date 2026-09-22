@@ -1,0 +1,195 @@
+.head {
+    text-align: center;
+    margin: 3rem 0 1rem;
+    padding-top: 8rem;
+  }
+  .head > span {
+    max-width: 650px;
+    width: 100%;
+    display: block;
+    margin: 0 auto;
+    font-size: 24px !important;
+    line-height: 26px;
+    color: #7A7777;
+    font-weight: 400;
+    font-family: 'Work Sans', sans-serif;
+  }
+  .head > h5 {
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 400;
+    font-size: 56px;
+    line-height: 72px;
+    letter-spacing: -1px;
+    text-align: center;
+    margin: 0;
+    padding-bottom: 40px;
+  }
+
+  /* Custom Drag Cursor */
+  .custom-drag-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 99px;
+    height: 99px;
+    background: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.4);
+    transition: opacity 0.25s ease, transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 100%;
+    letter-spacing: 0;
+    color: #000000;
+    user-select: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  }
+  .custom-drag-cursor.is-visible {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  .custom-drag-cursor.is-active {
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+
+  .carousel {
+    --card-w: 410px;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    cursor: none !important;
+  }
+  .carousel .swiper {
+    padding: 6rem 0 20rem;
+    overflow: visible;
+    cursor: none !important;
+  }
+  .carousel .swiper-slide {
+    width: var(--card-w) !important;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+  }
+  .carousel .testi-text h5 {
+    font-family: "Work Sans", sans-serif;
+    font-weight: 400;
+    font-size: 36px;
+    line-height: 60px;
+    letter-spacing: -1px;
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 0;
+  }
+  .carousel .testi-text p {
+    font-family: "Work Sans", sans-serif;
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 100%;
+    letter-spacing: 0;
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 0;
+  }
+  .carousel .single {
+    width: 100%;
+    position: relative;
+    user-select: none;
+    transform-origin: center bottom;
+    will-change: transform;
+  }
+  .carousel .single img {
+    width: 100%;
+    height: auto;
+    display: block;
+    pointer-events: none;
+  }
+
+  /* Text stage */
+  .carousel .swiper-slide .testi-text {
+    display: none;
+  }
+  .carousel .testi-stage {
+    --stagger: 0.1s;
+    --out-delay: 0.2s;
+    --rise: 40px;
+    --lift: -30px;
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: var(--card-w);
+    transform: translateX(-50%);
+    pointer-events: none;
+    z-index: 2;
+  }
+  .carousel .testi-stage .testi-text > * {
+    --i: 0;
+    opacity: 0;
+    transform: translateY(var(--rise));
+    will-change: transform, opacity;
+  }
+  .carousel .testi-stage.is-in .testi-text > * {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.5s ease-out calc(var(--i) * var(--stagger)),
+                transform 0.9s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--i) * var(--stagger));
+  }
+  .carousel .testi-stage.is-out .testi-text > * {
+    opacity: 0;
+    transform: translateY(var(--lift));
+    transition: opacity 0.25s ease-in calc(var(--out-delay) + var(--i) * var(--stagger)),
+                transform 0.35s ease-in calc(var(--out-delay) + var(--i) * var(--stagger));
+  }
+  .animate-on-scroll {
+    opacity: 0;
+  }
+  
+  .animate-on-scroll.animate__animated {
+    opacity: 1;
+  }
+  /* ========== MOBILE ========== */
+  @media (max-width: 767px) {
+    .head {
+      margin: 2rem 1rem 0.75rem;
+      padding-top: 3rem;
+    }
+    .head > h5 {
+      font-size: 32px;
+      line-height: 40px;
+      letter-spacing: -0.5px;
+      padding-bottom: 16px;
+    }
+    .head > span {
+      font-size: 15px !important;
+      line-height: 1.45;
+      max-width: 100%;
+      padding: 0 8px;
+    }
+    .carousel {
+      --card-w: 220px;
+      cursor: auto !important;
+    }
+    .carousel .swiper {
+      padding: 2rem 0 11rem;
+      cursor: auto !important;
+    }
+    .carousel .testi-text h5 {
+      font-size: 20px;
+      line-height: 1.3;
+      margin-top: 12px;
+    }
+    .carousel .testi-text p {
+      font-size: 14px;
+      margin-top: 4px;
+    }
+    .custom-drag-cursor {
+      display: none !important;
+    }
+  }

@@ -35,50 +35,161 @@
         "heading",
         "button"
       ],
+      "disabled": true,
       "settings": {
         "image_overlay_opacity": 40,
         "image_height": "large",
-        "desktop_content_position": "bottom-center",
-        "show_text_box": false,
         "image_behavior": "none",
+        "desktop_content_position": "bottom-center",
         "desktop_content_alignment": "center",
+        "show_text_box": false,
         "color_scheme": "scheme-3",
-        "mobile_content_alignment": "center",
         "stack_images_on_mobile": false,
+        "mobile_content_alignment": "center",
         "show_text_below": false
       }
     },
-    "featured_collection": {
-      "type": "featured-collection",
+    "custom_hero_slider_n4pEJ4": {
+      "type": "custom-hero-slider",
+      "blocks": {
+        "slide_MqAheB": {
+          "type": "slide",
+          "settings": {
+            "desktop_image": "shopify://shop_images/farm.webp",
+            "alt_text": "",
+            "subtitle": "Welcome To Tentwenty",
+            "heading": "From our Farms to your hands",
+            "link": "",
+            "button_label": ""
+          }
+        },
+        "slide_RztTKA": {
+          "type": "slide",
+          "settings": {
+            "desktop_image": "shopify://shop_images/hills.webp",
+            "alt_text": "",
+            "subtitle": "Welcome To Tentwenty",
+            "heading": "Tentwenty",
+            "link": "",
+            "button_label": ""
+          }
+        }
+      },
+      "block_order": [
+        "slide_MqAheB",
+        "slide_RztTKA"
+      ],
+      "name": "Custom Hero Slider",
       "settings": {
-        "title": "Featured products",
-        "heading_size": "h2",
-        "description": "",
-        "show_description": false,
-        "description_style": "body",
-        "collection": "all",
-        "products_to_show": 8,
-        "columns_desktop": 4,
-        "color_scheme": "scheme-1",
-        "full_width": false,
-        "show_view_all": true,
-        "view_all_style": "solid",
-        "enable_desktop_slider": false,
+        "use_h1": true,
+        "autoplay": true,
+        "autoplay_speed": 6,
+        "accessibility_label": "TenTwenty Highlights"
+      }
+    },
+    "curved_testimonial_slider_yQXGaN": {
+      "type": "curved-testimonial-slider",
+      "blocks": {
+        "testimonial_eLLagE": {
+          "type": "testimonial",
+          "settings": {
+            "image": "shopify://shop_images/ChatGPT_Image_Sep_21_2026_08_17_20_PM.png",
+            "client": "Client 5",
+            "location": "Palm , United Arab Emirates"
+          }
+        },
+        "testimonial_CnxVRB": {
+          "type": "testimonial",
+          "settings": {
+            "image": "shopify://shop_images/ChatGPT_Image_Sep_21_2026_04_16_01_PM.webp",
+            "client": "Client 1",
+            "location": "Dubai, United Arab Emirates"
+          }
+        },
+        "testimonial_YDWqf9": {
+          "type": "testimonial",
+          "settings": {
+            "image": "shopify://shop_images/angel-slider1.webp",
+            "client": "Client 2",
+            "location": "Abu Dhabi, United Arab Emirates"
+          }
+        },
+        "testimonial_eEf7iT": {
+          "type": "testimonial",
+          "settings": {
+            "image": "shopify://shop_images/angel-slider2.webp",
+            "client": "Client 3",
+            "location": "Al Ain, United Arab Emirates"
+          }
+        },
+        "testimonial_neHink": {
+          "type": "testimonial",
+          "settings": {
+            "image": "shopify://shop_images/ChatGPT_Image_Sep_21_2026_04_17_32_PM.webp",
+            "client": "Client 4",
+            "location": "Sharjah, United Arab Emirates"
+          }
+        }
+      },
+      "block_order": [
+        "testimonial_eLLagE",
+        "testimonial_CnxVRB",
+        "testimonial_YDWqf9",
+        "testimonial_eEf7iT",
+        "testimonial_neHink"
+      ],
+      "name": "Curved Testimonial Slider",
+      "settings": {
+        "heading": "Quality Products",
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+      }
+    },
+    "collection_list_L8qy7j": {
+      "type": "collection-list",
+      "blocks": {
+        "featured_collection_GyrQbB": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "womens"
+          }
+        },
+        "featured_collection_FzPQbN": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "mens"
+          }
+        },
+        "featured_collection_ntUDyp": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "bag"
+          }
+        }
+      },
+      "block_order": [
+        "featured_collection_GyrQbB",
+        "featured_collection_FzPQbN",
+        "featured_collection_ntUDyp"
+      ],
+      "name": "t:sections.collection-list.presets.name",
+      "settings": {
+        "title": "Collections",
+        "heading_size": "h1",
+        "image_ratio": "square",
+        "columns_desktop": 3,
+        "color_scheme": "",
+        "show_view_all": false,
+        "columns_mobile": "1",
         "swipe_on_mobile": false,
-        "image_ratio": "adapt",
-        "image_shape": "default",
-        "show_secondary_image": true,
-        "show_vendor": false,
-        "show_rating": false,
-        "quick_add": "none",
-        "columns_mobile": "2",
-        "padding_top": 44,
+        "padding_top": 36,
         "padding_bottom": 36
       }
     }
   },
   "order": [
     "image_banner",
-    "featured_collection"
+    "custom_hero_slider_n4pEJ4",
+    "curved_testimonial_slider_yQXGaN",
+    "collection_list_L8qy7j"
   ]
 }

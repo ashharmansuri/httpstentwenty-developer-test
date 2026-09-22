@@ -1,0 +1,276 @@
+
+<!-- Swiper CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+{{ 'curved-testimonial-slider.css' | asset_url | stylesheet_tag }}
+
+<!-- Custom Cursor -->
+<div class="custom-drag-cursor" id="dragCursor">DRAG</div>
+
+<div class="head head-watch">
+  {% if section.settings.heading != blank %}
+    <h5 class="animate-on-scroll">{{ section.settings.heading }}</h5>
+  {% endif %}
+  {% if section.settings.description != blank %}
+    <span class="animate-on-scroll">{{ section.settings.description }}</span>
+  {% endif %}
+</div>
+
+<div class="carousel" id="carouselWrapper">
+  <div class="swiper">
+    <div class="swiper-wrapper">
+      {% for block in section.blocks %}
+        <div class="swiper-slide" {{ block.shopify_attributes }}>
+          <div class="single">
+            {% if block.settings.image != blank %}
+              {{ block.settings.image | image_url: width: 800 | image_tag: loading: 'lazy', alt: block.settings.client }}
+            {% else %}
+              {{ 'image' | placeholder_svg_tag }}
+            {% endif %}
+          </div>
+          <div class="testi-text">
+            {% if block.settings.client != blank %}
+              <h5>{{ block.settings.client }}</h5>
+            {% endif %}
+            {% if block.settings.location != blank %}
+              <p>{{ block.settings.location }}</p>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Fixed text stage -->
+  <div class="testi-stage" id="testiStage">
+    <div class="testi-text"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" ></script>
+
+<script>
+  const CARD_SPACING = 90;
+  const MAX_TILT_DEG = 22;
+  const ARC_DROP = 130;
+
+  const isMobile = window.matchMedia('(max-width: 767px)').matches;
+  const mobileSpacing = 12;
+  const mobileTilt = 9;         // soft tilt
+  const mobileDrop = 32;        // ← main fix (pehle 55 tha)
+
+  const swiper = new Swiper('.swiper', {
+    slidesPerView: 'auto',
+    centeredSlides: true,
+    spaceBetween: isMobile ? mobileSpacing : CARD_SPACING,
+    loop: true,
+    loopSlides: {{ section.blocks.size | at_least: 6 }},
+    watchSlidesProgress: true,
+    grabCursor: false,
+    speed: 500,
+    breakpoints: {
+      768: {
+        spaceBetween: CARD_SPACING
+      }
+    }
+  });
+  function calculateWheel() {
+  const carousel = document.getElementById('carouselWrapper');
+  const carouselRect = carousel.getBoundingClientRect();
+
+  // Use actual carousel center instead of viewport center
+  const carouselCenterX = carouselRect.left + carouselRect.width / 2;
+  const halfCarouselWidth = carouselRect.width / 2;
+
+  const slides = document.querySelectorAll('.single');
+
+  const tilt = isMobile ? mobileTilt : MAX_TILT_DEG;
+  const drop = isMobile ? mobileDrop : ARC_DROP;
+
+  slides.forEach((slide) => {
+    const rect = slide.getBoundingClientRect();
+    const slideCenterX = rect.left + rect.width / 2;
+
+    const progress =
+      (slideCenterX - carouselCenterX) / halfCarouselWidth;
+
+    const ty = Math.pow(progress, 2) * drop;
+    const rotate = progress * tilt;
+
+    slide.style.transform =
+      `translate3d(0, ${ty}px, 0) rotate(${rotate}deg)`;
+  });
+}
+
+
+  function raf() {
+    calculateWheel();
+    requestAnimationFrame(raf);
+  }
+  raf();
+
+  // Text animation
+  const SHOW_AFTER = 1000;
+  const stage     = document.getElementById('testiStage');
+  const stageText = stage.querySelector('.testi-text');
+  const swiperEl  = document.querySelector('.carousel .swiper');
+  const firstCard = document.querySelector('.carousel .single');
+  let showTimer;
+
+  function placeStage() {
+    if (!firstCard) return;
+    const padTop = parseFloat(getComputedStyle(swiperEl).paddingTop);
+    stage.style.top = (padTop + firstCard.offsetHeight + (isMobile ? 12 : 20)) + 'px';
+  }
+  if (firstCard) {
+    new ResizeObserver(placeStage).observe(firstCard);
+    placeStage();
+  }
+
+  function hideText() {
+    stage.classList.remove('is-in');
+    stage.classList.add('is-out');
+  }
+
+  function showText() {
+    const slide = swiper.slides[swiper.activeIndex];
+    const source = slide && slide.querySelector('.testi-text');
+
+    stage.classList.remove('is-out');
+    stageText.innerHTML = source ? source.innerHTML : '';
+    Array.from(stageText.children).forEach((el, i) => el.style.setProperty('--i', i));
+    void stageText.offsetWidth;
+    stage.classList.add('is-in');
+  }
+
+  function queueShow(delay) {
+    clearTimeout(showTimer);
+    showTimer = setTimeout(showText, delay);
+  }
+
+  swiper.on('slideChange', () => {
+    hideText();
+    queueShow(SHOW_AFTER);
+  });
+
+  queueShow(300);
+
+  // Custom cursor (only on devices that support hover)
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    const cursor = document.getElementById('dragCursor');
+    const carouselArea = document.getElementById('carouselWrapper');
+
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let cursorX = mouseX;
+    let cursorY = mouseY;
+
+    window.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    carouselArea.addEventListener('mouseenter', () => {
+      cursor.classList.add('is-visible');
+    });
+
+    carouselArea.addEventListener('mouseleave', () => {
+      cursor.classList.remove('is-visible');
+      cursor.classList.remove('is-active');
+    });
+
+    window.addEventListener('mousedown', () => {
+      if (cursor.classList.contains('is-visible')) {
+        cursor.classList.add('is-active');
+      }
+    });
+
+    window.addEventListener('mouseup', () => {
+      cursor.classList.remove('is-active');
+    });
+
+    function renderCursor() {
+      cursorX += (mouseX - cursorX) * 0.15;
+      cursorY += (mouseY - cursorY) * 0.15;
+      cursor.style.left = `${cursorX}px`;
+      cursor.style.top = `${cursorY}px`;
+      requestAnimationFrame(renderCursor);
+    }
+    renderCursor();
+
+    document.addEventListener('DOMContentLoaded', function () {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('animate__animated', 'animate__fadeInUp');
+        observer.unobserve(entry.target); // ek baar chalane ke baad band
+      }
+    });
+  }, {
+    threshold: 0.2   // 20% dikhne par animation start
+  });
+
+  document.querySelectorAll('.animate-on-scroll').forEach(el => {
+    observer.observe(el);
+  });
+});              
+
+
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Curved Testimonial Slider",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Quality Products"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "client",
+          "label": "Client",
+          "default": "Client Name"
+        },
+        {
+          "type": "text",
+          "id": "location",
+          "label": "Location",
+          "default": "Location"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Curved Testimonial Slider",
+      "blocks": [
+        { "type": "testimonial" },
+        { "type": "testimonial" },
+        { "type": "testimonial" },
+        { "type": "testimonial" }
+      ]
+    }
+  ]
+}
+{% endschema %}

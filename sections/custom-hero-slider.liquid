@@ -1,0 +1,357 @@
+{% style %}
+  #farm-hero-{{ section.id }} {
+    --hero-font: 'Work Sans', sans-serif;
+    --hero-text-light: #EEF4F9;
+    --hero-text-mobile: #F9F4EE;
+    --hero-accent-border: #ffffff;
+    --hero-track-bg: rgba(255, 255, 255, 0.3);
+    --hero-track-fill: #ffffff;
+
+    --hero-wipe-duration: 1200ms;
+    --hero-wipe-ease: cubic-bezier(0.65, 0, 0.35, 1);
+
+    position: relative;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #000000;
+    font-family: var(--hero-font);
+    user-select: none;
+    -webkit-user-select: none;
+  }
+{% endstyle %}
+
+{{ 'custom-hero-slider.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign slide_count = section.blocks.size
+  assign autoplay = section.settings.autoplay
+  assign autoplay_speed = section.settings.autoplay_speed | times: 1000 -%}
+<section
+  id="farm-hero-{{ section.id }}"
+  class="farm-hero-section"
+  data-section-id="{{ section.id }}"
+  data-slide-count="{{ slide_count }}"
+  data-autoplay="{{ autoplay }}"
+  data-autoplay-speed="{{ autoplay_speed }}"
+  aria-label="Hero Banner Slider">
+  <div class="page-width-full">
+    <div
+      class="hero-banner-slider"
+      role="region"
+      aria-roledescription="carousel"
+      aria-label="{{ section.settings.accessibility_label | default: 'Featured Highlights' | escape }}">
+
+      <!-- Slides Container -->
+      <div class="farm-hero__slides-wrapper">
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign is_first = forloop.first
+            assign desktop_img = block.settings.desktop_image
+            assign mobile_img = block.settings.mobile_image
+
+            if mobile_img == blank
+              assign mobile_img = desktop_img
+            endif
+
+            assign slide_alt = block.settings.alt_text | default: desktop_img.alt | default: block.settings.heading | default: 'TenTwenty Farms Hero'
+
+            if is_first
+              assign img_loading = 'eager'
+              assign img_fetchpriority = 'high'
+            else
+              assign img_loading = 'lazy'
+              assign img_fetchpriority = 'auto'
+            endif
+
+            assign is_h1 = false
+            if section.settings.use_h1 and is_first
+              assign is_h1 = true
+            endif
+          -%}
+
+          <div
+            class="farm-hero__slide {% if is_first %}is-active is-initial{% endif %}"
+            id="Slide-{{ section.id }}-{{ forloop.index }}"
+            data-index="{{ forloop.index0 }}"
+            role="group"
+            aria-roledescription="slide"
+            aria-label="Slide {{ forloop.index }} of {{ slide_count }}"
+            aria-hidden="{% if is_first %}false{% else %}true{% endif %}"
+            {{ block.shopify_attributes }}>
+
+            <div class="farm-hero__media-container">
+              {%- if desktop_img != blank -%}
+                <picture class="farm-hero__picture">
+                  <source
+                    media="(max-width: 767px)"
+                    srcset="
+                      {{ mobile_img | image_url: width: 450 }} 450w,
+                      {{ mobile_img | image_url: width: 750 }} 750w,
+                      {{ mobile_img | image_url: width: 900 }} 900w"
+                    sizes="100vw">
+                  <source
+                    media="(min-width: 768px)"
+                    srcset="
+                      {{ desktop_img | image_url: width: 1000 }} 1000w,
+                      {{ desktop_img | image_url: width: 1440 }} 1440w,
+                      {{ desktop_img | image_url: width: 1920 }} 1920w,
+                      {{ desktop_img | image_url: width: 2560 }} 2560w"
+                    sizes="100vw">
+                  {{ desktop_img | image_url: width: 1920 | image_tag: 
+                    class: 'farm-hero__image',
+                    alt: slide_alt,
+                    loading: img_loading,
+                    fetchpriority: img_fetchpriority,
+                    decoding: 'async',
+                    widths: '450, 750, 1000, 1440, 1920, 2560'
+                  }}
+                </picture>
+              {%- else -%}
+                <div class="farm-hero__placeholder">
+                  {{ 'lifestyle-1' | placeholder_svg_tag: 'farm-hero__placeholder-svg' }}
+                </div>
+              {%- endif -%}
+              <div class="farm-hero__overlay"></div>
+            </div>
+
+            <div class="farm-hero__content-wrap">
+              <div class="farm-hero__content">
+                {%- if block.settings.subtitle != blank -%}
+                  <p class="farm-hero__subtitle farm-hero__anim-item">{{ block.settings.subtitle | escape }}</p>
+                {%- endif -%}
+                
+                {%- if block.settings.heading != blank -%}
+                  {%- if is_h1 -%}
+                    <h1 class="farm-hero__heading farm-hero__anim-item">{{ block.settings.heading | newline_to_br }}</h1>
+                  {%- else -%}
+                    <h2 class="farm-hero__heading farm-hero__anim-item">{{ block.settings.heading | newline_to_br }}</h2>
+                  {%- endif -%}
+                {%- endif -%}
+
+                {%- if block.settings.button_label != blank and block.settings.link != blank -%}
+                  <a href="{{ block.settings.link }}" class="farm-hero__cta-btn farm-hero__anim-item">
+                    <span>{{ block.settings.button_label | escape }}</span>
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 14 14"
+                      fill="none"
+                      aria-hidden="true">
+                      <path
+                        d="M1 7H13M13 7L7.5 1.5M13 7L7.5 12.5"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    </svg>
+                  </a>
+                {%- endif -%}
+              </div>
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+
+      <!-- Navigation & Controls -->
+      {%- if slide_count > 1 -%}
+        <div class="farm-hero__footer" aria-label="Carousel Controls">
+
+          <!-- Thumbnail Next Button with Live SVG Border -->
+          <div class="farm-hero__thumb-nav-wrapper">
+            <button
+              type="button"
+              class="farm-hero__thumb-btn"
+              data-hero-next
+              aria-label="Next Slide">
+              <div class="farm-hero__thumb-frame">
+                <svg
+                  class="farm-hero__thumb-svg"
+                  viewBox="0 0 100 100"
+                  preserveAspectRatio="none">
+                  <rect
+                    class="farm-hero__border-track"
+                    x="2"
+                    y="2"
+                    width="96"
+                    height="96" />
+                  <rect
+                    class="farm-hero__border-live"
+                    x="2"
+                    y="2"
+                    width="96"
+                    height="96" />
+                </svg>
+
+                <div class="farm-hero__thumb-img-box">
+                  <div class="farm-hero__thumb-slider" data-thumb-track>
+                    {%- for block in section.blocks -%}
+                      {%- liquid
+                        assign thumb_img = block.settings.mobile_image | default: block.settings.desktop_image
+                      -%}
+                      <div class="farm-hero__thumb-item-wrapper" data-thumb-index="{{ forloop.index0 }}">
+                        {%- if thumb_img != blank -%}
+                          <img
+                            src="{{ thumb_img | image_url: width: 200, height: 200, crop: 'center' }}"
+                            width="100"
+                            height="100"
+                            alt=""
+                            aria-hidden="true"
+                            loading="lazy"
+                            class="farm-hero__thumb-item">
+                        {%- else -%}
+                          <div class="farm-hero__thumb-item farm-hero__thumb-placeholder"></div>
+                        {%- endif -%}
+                      </div>
+                    {%- endfor -%}
+                  </div>
+                  <span class="farm-hero__thumb-text">Next</span>
+                </div>
+              </div>
+            </button>
+          </div>
+
+          <!-- Numeric Progress Track -->
+          <div class="farm-hero__pagination" aria-live="polite">
+            <span class="farm-hero__page-current" data-current-indicator>01</span>
+            <div
+              class="farm-hero__page-track"
+              role="progressbar"
+              aria-valuemin="1"
+              aria-valuemax="{{ slide_count }}"
+              aria-valuenow="1">
+              <span class="farm-hero__page-bar" data-progress-bar></span>
+            </div>
+            <span class="farm-hero__page-total">
+              {%- if slide_count < 10 -%}0{{ slide_count }}
+              {%- else -%}
+                {{ slide_count }}{%- endif -%}
+            </span>
+          </div>
+
+          <!-- Screen Reader Accessible Controls -->
+          <div class="farm-hero__sr-controls">
+            <button
+              type="button"
+              class="farm-hero__sr-btn"
+              data-hero-prev
+              aria-label="Previous slide">
+              <span class="visually-hidden">Previous</span>
+            </button>
+          </div>
+        </div>
+      {%- endif -%}
+
+    </div>
+  </div>
+</section>
+
+
+<script src="{{ 'custom-hero-slider.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Custom Hero Slider",
+  "tag": "section",
+  "class": "section-farm-hero-slider",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "use_h1",
+      "label": "Use <h1> for the first slide heading",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Enable autoplay",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "min": 3,
+      "max": 12,
+      "step": 1,
+      "unit": "s",
+      "label": "Autoplay transition speed",
+      "default": 6
+    },
+    {
+      "type": "text",
+      "id": "accessibility_label",
+      "label": "Carousel screen reader label",
+      "default": "TenTwenty Highlights"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Images"
+        },
+        {
+          "type": "image_picker",
+          "id": "desktop_image",
+          "label": "Desktop image"
+        },
+        {
+          "type": "image_picker",
+          "id": "mobile_image",
+          "label": "Mobile image (Optional)"
+        },
+        {
+          "type": "text",
+          "id": "alt_text",
+          "label": "Custom image alt text"
+        },
+        {
+          "type": "header",
+          "content": "Content"
+        },
+        {
+          "type": "text",
+          "id": "subtitle",
+          "label": "Subtitle / Eyebrow",
+          "default": "Welcome To Tentwenty"
+        },
+        {
+          "type": "textarea",
+          "id": "heading",
+          "label": "Main heading",
+          "default": "Tentwenty"
+        },
+        {
+          "type": "header",
+          "content": "Link / Action (Optional)"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Button link"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button label"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Hero Slider",
+      "blocks": [
+        { "type": "slide" },
+        { "type": "slide" },
+        { "type": "slide" },
+        { "type": "slide" }
+      ]
+    }
+  ]
+}
+{% endschema %}
